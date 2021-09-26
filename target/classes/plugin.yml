@@ -1,0 +1,9 @@
+name: Minion
+main: me.labalityowo.Main
+version: ${}
+api: ["1.0.13"]
+load: POSTWORLD
+depend:
+  - FakeInventories
+author: labalityowo
+description: Minion
