@@ -1,6 +1,7 @@
 package me.labalityowo;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.level.Position;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -25,6 +26,7 @@ public class Main extends PluginBase{
         assert provider != null;
         inventoryManager = provider.getProvider();
         this.getServer().getCommandMap().register("Minion", new MinionCommand(this));
+        Entity.registerEntity("Miner", Miner.class);
     }
 
     public static FakeInventories getInventoryManager() {
@@ -36,6 +38,7 @@ public class Main extends PluginBase{
         nbt.putString("owner", owner.getName());
         nbt.putInt("level", level);
         nbt.put("Skin", owner.namedTag.get("Skin").copy());
+        nbt.putInt("workingTick", level == 1 ? 10 : 40);
         Minion minion;
         switch (type){
             case Miner:

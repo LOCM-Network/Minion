@@ -2,6 +2,7 @@ package me.labalityowo.minions;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -9,7 +10,10 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.TextFormat;
 import com.nukkitx.fakeinventories.inventory.ChestFakeInventory;
 import com.nukkitx.fakeinventories.inventory.DoubleChestFakeInventory;
@@ -42,9 +46,11 @@ public abstract class Minion extends EntityHuman {
 
     private final int level = 1;
 
-    private int triggerAfterSecond = 0;
-
     private int workingTick = 0;
+
+    private int breakingBlockTick = 0;
+
+    private Block targetBlock;
 
     public Minion(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -60,7 +66,7 @@ public abstract class Minion extends EntityHuman {
 
     public void setStatus(MinionStatus status){
         this.status = status;
-        StringBuilder nametagBuilder = new StringBuilder(getOwner() + "'s Minion\n\nStatus: ");
+        StringBuilder nametagBuilder = new StringBuilder(getOwner() + "'s Minion\n\nDEBUG: working tick: " + workingTick + "/" + namedTag.getInt("workingTick") + "\n\nStatus: ");
         switch (status){
             case WORKING:
                 nametagBuilder.append("Working");
@@ -92,13 +98,17 @@ public abstract class Minion extends EntityHuman {
         switch(level){
             case 1:
                 inventory = new ChestFakeInventory();
-                triggerAfterSecond = 3 * 100;
                 break;
             case 2:
                 inventory = new DoubleChestFakeInventory();
-                triggerAfterSecond = 2 * 100;
                 break;
         }
+        ListTag<CompoundTag> inventoryTag = (ListTag<CompoundTag>) namedTag.getList("MinionInventory");
+
+        inventoryTag.getAll().forEach(tag -> {
+            inventory.setItem(tag.getByte("slot"), NBTIO.getItemHelper(tag));
+        });
+
         super.initEntity();
     }
 
@@ -107,13 +117,15 @@ public abstract class Minion extends EntityHuman {
     public void lookAt(Vector3 target){
         double horizontal = Math.sqrt(Math.pow(target.x - this.x, 2) + Math.pow(target.z - this.z, 2));
         double vertical = target.y - this.y;
-        setPitch(-Math.atan2(vertical, horizontal) / Math.PI * 180);
+        double pitch = (-Math.atan2(vertical, horizontal) / Math.PI * 180);
         double xDist = target.x - this.x;
         double zDist = target.z - this.z;
-        setYaw(Math.atan2(zDist, xDist) / Math.PI * 180 - 90);
-        if(getYaw() < 0){
-            setYaw(getYaw() + 360.0);
+        double yaw = Math.atan2(zDist, xDist) / Math.PI * 180 - 90;
+        if(this.yaw < 0){
+            yaw += 360.0;
         }
+        this.yaw = yaw;
+        this.pitch = pitch;
     }
 
     @Override
@@ -130,33 +142,61 @@ public abstract class Minion extends EntityHuman {
 
         setStatus(MinionStatus.WORKING);
 
-        if(workingTick == triggerAfterSecond){
+        if(targetBlock != null){
+            int trigger = (int) Math.ceil(targetBlock.getBreakTime(getInventory().getItemInHand())) * 10;
+            if(breakingBlockTick == trigger){
+                getLevel().setBlock(targetBlock, Block.get(BlockID.AIR));
+                Arrays.stream(targetBlock.getDrops(getInventory().getItemInHand())).forEach(drop -> {
+                    if(!inventory.canAddItem(drop)){
+                        setStatus(MinionStatus.FULL_INVENTORY);
+                        return;
+                    }
+                    inventory.addItem(drop);
+                });
+                this.pitch = 0;
+                targetBlock = null;
+                breakingBlockTick = 0;
+            }
+            breakingBlockTick++;
+            return onUpdate;
+        }
+
+        if(workingTick >= namedTag.getInt("workingTick")){
             //TODO: Rewrite this, messy af
             Position pos = getPosition();
-            for(int x = -3; x < 4; x++) {
-                for (int y = -3; y < 4; y++) {
-                    for (int z = -3; z < 4; z++) {
+            for(int x = -3; x <= 3; x++) {
+                for (int y = -3; y <= 3; y++) {
+                    for (int z = -3; z <= 3; z++) {
                         Block block = getLevel().getBlock(pos.add(x, y, z));
                         if(Arrays.stream(getTargetBlocks()).anyMatch(target -> block.getId() == target.getId())){
-                            block.onBreak(getInventory().getItemInHand());
-                            Item[] drops = block.getDrops(getInventory().getItemInHand());
-                            Arrays.stream(drops).forEach(drop -> {
-                                if(!inventory.canAddItem(drop)){
-                                    setStatus(MinionStatus.FULL_INVENTORY);
-                                    return;
-                                }
-                                inventory.addItem(drop);
-                            });
-                            break;
+                            lookAt(block.getLocation());
+                            LevelEventPacket pk = new LevelEventPacket();
+                            pk.evid = LevelEventPacket.EVENT_BLOCK_START_BREAK;
+                            pk.x = (float) block.x;
+                            pk.y = (float) block.y;
+                            pk.z = (float) block.z;
+                            pk.data = (int) (65535 / Math.ceil(block.getBreakTime(getInventory().getItemInHand()) * 20));
+                            this.getLevel().addChunkPacket(block.getFloorX() >> 4, block.getFloorZ() >> 4, pk);
+                            workingTick = 0;
+                            targetBlock = block;
+                            return onUpdate;
                         }
                     }
                 }
             }
-            workingTick = 0;
-            return onUpdate;
         }
         workingTick++;
         return onUpdate;
+    }
+
+    @Override
+    public void saveNBT() {
+        ListTag<CompoundTag> inventoryTag = new ListTag<CompoundTag>();
+        inventory.getContents().forEach((index, item) -> {
+            inventoryTag.add(NBTIO.putItemHelper(item, index));
+        });
+        namedTag.put("MinionInventory", inventoryTag);
+        super.saveNBT();
     }
 
     public boolean doToolCheck(){
@@ -209,7 +249,7 @@ public abstract class Minion extends EntityHuman {
             }));
         }
         form.addButton(new Button("View minion inventory.", (p, button) -> {
-                p.addWindow(inventory);
+            p.addWindow(inventory);
         }));
         form.addButton(new Button("Despawn minion.", (p, button) -> {
             close();
