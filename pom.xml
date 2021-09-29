@@ -33,6 +33,14 @@
             <version>1.0.3-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>me.labalityowo</groupId>
+            <artifactId>formconstructors</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/FormConstructor.jar</systemPath>
+        </dependency>
     </dependencies>
 
 </project>
