@@ -1,6 +1,7 @@
 package me.labalityowo.minions;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -129,7 +130,7 @@ public abstract class Minion extends EntityHuman {
 
         setStatus(MinionStatus.WORKING);
 
-        if(targetBlock != null){
+        if(targetBlock != null && checkOwner()){
             onBreak();
             return onUpdate;
         }
@@ -159,6 +160,15 @@ public abstract class Minion extends EntityHuman {
         inventory.getContents().forEach((index, item) -> inventoryTag.add(NBTIO.putItemHelper(item, index)));
         namedTag.put("MinionInventory", inventoryTag);
         super.saveNBT();
+    }
+
+    public boolean checkOwner(){
+        String owner = this.getOwner();
+        if(Server.getInstance().getPlayerExact(owner) != null){
+            Player player = Server.getInstance().getPlayerExact(owner);
+            return player.isOnline();
+        }
+        return false;
     }
 
     public boolean doToolCheck(){
