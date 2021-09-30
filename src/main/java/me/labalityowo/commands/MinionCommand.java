@@ -33,22 +33,7 @@ public class MinionCommand extends Command {
         Player target = Server.getInstance().getPlayerExact(strings[0]);
         int type = Integer.parseInt(strings[1]);
         int level = Integer.parseInt(strings[2]);
-        ItemArmorStand item = (ItemArmorStand) Item.get(ItemID.ARMOR_STAND, 0, 1);
-        CompoundTag tag = new CompoundTag();
-        tag.putInt("minionType", type);
-        tag.putInt("minionLevel", level);
-        item.setNamedTag(tag);
-        target.getInventory().addItem(item);
-        String atype = "";
-        if(type == 1){
-            atype = "Thợ mỏ";
-        }else atype = (type == 2 ? "Thợ mỏ" : "Nông dân");
-        item.setCustomName(TextFormat.colorize("&e" + atype + "\n&fĐặt xuống đất để tạo công nhân"));
-        item.setLore(TextFormat.colorize("&l&eLưu ý:&f Làm mất admin không chịu trách nhiệm!"));
-        if(target.getInventory().canAddItem(item)){
-            target.getInventory().addItem(item);
-            target.sendMessage(TextFormat.colorize("&l&fBạn vừa thuê công nhân thành công (&e" + atype + "&f)" ));
-        }
+        target.getInventory().addItem(Main.getMinionItem(type, level, 1));
         return true;
     }
 }

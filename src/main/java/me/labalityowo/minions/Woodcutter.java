@@ -2,6 +2,7 @@ package me.labalityowo.minions;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AnimatePacket;
@@ -60,5 +61,10 @@ public class Woodcutter extends Minion{
         getLevel().addChunkPacket(block.getFloorX() >> 4, block.getFloorZ() >> 4, pk);
         workingTick = 0;
         targetBlock = block;
+    }
+
+    @Override
+    public boolean doToolCheck(Item item){
+        return item.isAxe();
     }
 }

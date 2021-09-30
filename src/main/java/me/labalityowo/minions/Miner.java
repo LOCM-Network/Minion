@@ -2,6 +2,7 @@ package me.labalityowo.minions;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AnimatePacket;
@@ -17,7 +18,20 @@ public class Miner extends Minion{
     @Override
     public Block[] getTargetBlocks() {
         return new Block[]{
-                Block.get(BlockID.STONE)
+                Block.get(BlockID.STONE),
+                Block.get(BlockID.COBBLE),
+                Block.get(BlockID.IRON_BLOCK),
+                Block.get(BlockID.IRON_ORE),
+                Block.get(BlockID.COAL_BLOCK),
+                Block.get(BlockID.COAL_ORE),
+                Block.get(BlockID.LAPIS_BLOCK),
+                Block.get(BlockID.LAPIS_ORE),
+                Block.get(BlockID.GOLD_ORE),
+                Block.get(BlockID.GOLD_BLOCK),
+                Block.get(BlockID.DIAMOND_BLOCK),
+                Block.get(BlockID.DIAMOND_ORE),
+                Block.get(BlockID.EMERALD_BLOCK),
+                Block.get(BlockID.EMERALD_ORE)
         };
     }
 
@@ -60,5 +74,10 @@ public class Miner extends Minion{
         getLevel().addChunkPacket(block.getFloorX() >> 4, block.getFloorZ() >> 4, pk);
         workingTick = 0;
         targetBlock = block;
+    }
+
+    @Override
+    public boolean doToolCheck(Item item) {
+        return item.isPickaxe();
     }
 }

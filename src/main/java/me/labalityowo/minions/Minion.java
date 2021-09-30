@@ -199,28 +199,28 @@ public abstract class Minion extends EntityHuman {
 
     public void sendForm(Player owner){
         SimpleForm form = new SimpleForm(getOwner() + "'s minion");
-        form.addButton(new Button("Change minion tool.", (p, button) -> {
+        form.addButton(new Button(TextFormat.colorize("&l&0Đưa công cụ cho công nhân"), (p, button) -> {
             Item minionTool = getInventory().getItemInHand();
             Item playerTool = p.getInventory().getItemInHand();
             if(!doToolCheck(playerTool)){
-                p.sendMessage("Ko hop item");
+                p.sendMessage(TextFormat.colorize("&l&cCông cụ không hợp lệ"));
                 return;
             }
             getInventory().setItemInHand(playerTool);
             p.getInventory().setItemInHand(minionTool);
         }));
         if(!getInventory().getItemInHand().equals(Item.get(0))){
-            form.addButton(new Button("Remove minion tool.", (p, button) -> {
+            form.addButton(new Button(TextFormat.colorize("&l&0Thu công cụ về"), (p, button) -> {
                 Item minionTool = getInventory().getItemInHand();
                 if(!p.getInventory().canAddItem(minionTool)){
-                    p.sendMessage("Tui do da day");
+                    p.sendMessage(TextFormat.colorize("&l&cTúi đã đầy"));
                     return;
                 }
                 getInventory().setItemInHand(Item.get(0));
                 p.getInventory().addItem(minionTool);
             }));
         }
-        form.addButton(new Button("View minion inventory.", (p, button) -> {
+        form.addButton(new Button(TextFormat.colorize("&l&0Xem kho của công nhân"), (p, button) -> {
             FakeInventory tempInventory;
             switch(namedTag.getInt("minionLevel")){
                 case 1:
@@ -240,7 +240,7 @@ public abstract class Minion extends EntityHuman {
             p.addWindow(tempInventory);
         }));
 
-        form.addButton(new Button("Despawn minion.", (p, button) -> {
+        form.addButton(new Button(TextFormat.colorize("&l&0Thu công nhân về"), (p, button) -> {
             close();
             ItemArmorStand item = (ItemArmorStand) Item.get(ItemID.ARMOR_STAND, 0, 1);
             CompoundTag tag = new CompoundTag();
@@ -251,9 +251,9 @@ public abstract class Minion extends EntityHuman {
         }));
 
         if(namedTag.getInt("minionLevel") < 2){
-            form.addButton(new Button("Upgrade.", (p, button) -> {
+            form.addButton(new Button(TextFormat.colorize("&l&0Nâng cấp công nhân"), (p, button) -> {
                 if(EconomyAPI.getInstance().reduceCoin(p, 100) == 0){
-                    p.sendMessage("ko du tien");
+                    p.sendMessage(TextFormat.colorize("&l&cKhông đủ LCoin để nâng cấp"));
                     return;
                 }
                 namedTag.putInt("minionLevel", namedTag.getInt("minionLevel") + 1);

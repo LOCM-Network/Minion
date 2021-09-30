@@ -4,11 +4,15 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
+import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemArmorStand;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.plugin.service.RegisteredServiceProvider;
+import cn.nukkit.utils.TextFormat;
 import com.nukkitx.fakeinventories.inventory.FakeInventories;
 import me.labalityowo.commands.MinionCommand;
 import me.labalityowo.minions.Farmer;
@@ -39,6 +43,16 @@ public class Main extends PluginBase implements Listener {
         return inventoryManager;
     }
 
+    @EventHandler
+    public void onPlace(BlockPlaceEvent event){
+        Item item = event.getItem();
+        if(item.getId() == Item.ARMOR_STAND){
+            if(item.hasCompoundTag()) return;
+            item.setCount(item.getCount() - 1);
+            event.getPlayer().getInventory().setItemInHand(item);
+            event.setCancelled();
+        }
+    }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event){
@@ -74,7 +88,25 @@ public class Main extends PluginBase implements Listener {
                 minion.spawnToAll();
                 item.setCount(item.getCount() - 1);
                 event.getPlayer().getInventory().setItemInHand(item);
+                event.setCancelled();
             }
         }
+    }
+
+    public static Item getMinionItem(int type, int level, int count){
+        ItemArmorStand item = (ItemArmorStand) Item.get(ItemID.ARMOR_STAND, 0, 1);
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("minionType", type);
+        tag.putInt("minionLevel", level);
+        item.setNamedTag(tag);
+        String atype = "";
+
+        if(type == 1){
+            atype = "Thợ mỏ";
+        }else atype = (type == 2 ? "Thợ mỏ" : "Nông dân");
+
+        item.setCustomName(TextFormat.colorize("&e" + atype + "\n&fĐặt xuống đất để tạo công nhân"));
+        item.setLore(TextFormat.colorize("&l&eLưu ý:&f Làm mất admin không chịu trách nhiệm!"));
+        return item;
     }
 }

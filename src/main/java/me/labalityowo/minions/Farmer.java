@@ -17,7 +17,13 @@ public class Farmer extends Minion{
     @Override
     public Block[] getTargetBlocks() {
         return new Block[]{
-                Block.get(BlockID.WHEAT_BLOCK, 0x07)
+                Block.get(Block.WHEAT_BLOCK),
+                Block.get(Block.POTATO_BLOCK),
+                Block.get(Block.COCOA_BLOCK),
+                Block.get(Block.CARROT_BLOCK),
+                Block.get(Block.MELON_BLOCK),
+                Block.get(Block.CARVED_PUMPKIN),
+                Block.get(Block.LIT_PUMPKIN)
         };
     }
 
@@ -69,6 +75,6 @@ public class Farmer extends Minion{
 
     @Override
     public boolean doToolCheck(Item item) {
-        return true;
+        return item.isHoe();
     }
 }
