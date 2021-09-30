@@ -9,15 +9,15 @@ import cn.nukkit.network.protocol.LevelEventPacket;
 
 import java.util.Arrays;
 
-public class Miner extends Minion{
-    public Miner(FullChunk chunk, CompoundTag nbt) {
+public class Woodcutter extends Minion{
+    public Woodcutter(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
     @Override
     public Block[] getTargetBlocks() {
         return new Block[]{
-                Block.get(BlockID.STONE)
+                Block.get(BlockID.LOG)
         };
     }
 
