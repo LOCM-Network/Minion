@@ -2,7 +2,6 @@ package me.labalityowo.minions;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -15,8 +14,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.AnimatePacket;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.TextFormat;
 import com.nukkitx.fakeinventories.inventory.*;
 import me.locm.economyapi.EconomyAPI;
@@ -158,7 +155,7 @@ public abstract class Minion extends EntityHuman {
 
     @Override
     public void saveNBT() {
-        ListTag<CompoundTag> inventoryTag = new ListTag<CompoundTag>();
+        ListTag<CompoundTag> inventoryTag = new ListTag<>();
         inventory.getContents().forEach((index, item) -> inventoryTag.add(NBTIO.putItemHelper(item, index)));
         namedTag.put("MinionInventory", inventoryTag);
         super.saveNBT();
