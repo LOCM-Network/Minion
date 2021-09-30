@@ -46,7 +46,7 @@ public class Woodcutter extends Minion{
 
     @Override
     public int getType() {
-        return 1;
+        return 2;
     }
 
     @Override

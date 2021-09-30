@@ -9,6 +9,7 @@ import cn.nukkit.network.protocol.AnimatePacket;
 import java.util.Arrays;
 
 public class Farmer extends Minion{
+
     public Farmer(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
