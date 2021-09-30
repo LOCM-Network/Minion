@@ -157,7 +157,12 @@ public abstract class Minion extends EntityHuman {
     @Override
     public void saveNBT() {
         ListTag<CompoundTag> inventoryTag = new ListTag<>();
-        inventory.getContents().forEach((index, item) -> inventoryTag.add(NBTIO.putItemHelper(item, index)));
+        inventory.getContents().forEach((index, item) -> {
+            //?
+            CompoundTag nbt = NBTIO.putItemHelper(item);
+            nbt.putByte("slot", index);
+            inventoryTag.add(nbt);
+        });
         namedTag.put("MinionInventory", inventoryTag);
         super.saveNBT();
     }
