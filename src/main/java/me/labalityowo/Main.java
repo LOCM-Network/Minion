@@ -45,6 +45,9 @@ public class Main extends PluginBase implements Listener {
 
     @EventHandler
     public void onPlace(BlockPlaceEvent event){
+        if(event.isCancelled()){
+            return;
+        }
         Item item = event.getItem();
         if(item.getId() == Item.ARMOR_STAND){
             if(item.hasCompoundTag()) return;
@@ -56,6 +59,9 @@ public class Main extends PluginBase implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event){
+        if(event.isCancelled()){
+            return;
+        }
         if(event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK){
             Item item = event.getItem();
             CompoundTag tag = item.getNamedTag();
