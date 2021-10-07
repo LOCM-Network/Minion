@@ -3,6 +3,7 @@ package me.labalityowo;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
@@ -43,7 +44,7 @@ public class Main extends PluginBase implements Listener {
         return inventoryManager;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlace(BlockPlaceEvent event){
         if(event.isCancelled()){
             return;
@@ -57,7 +58,7 @@ public class Main extends PluginBase implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEvent event){
         if(event.isCancelled()){
             return;
@@ -77,6 +78,12 @@ public class Main extends PluginBase implements Listener {
                 nbt.putInt("minionLevel", level);
                 nbt.put("Skin", event.getPlayer().namedTag.get("Skin").copy());
                 nbt.putInt("workingTick", level == 1 ? 80 : 60);
+                if(tag.contains("MinionInventory")){
+                    nbt.put("MinionInventory", tag.get("MinionInventory"));
+                }
+                if(tag.contains("MinionTool")){
+                    nbt.put("MinionTool", tag.get("MinionTool"));
+                }
                 Minion minion;
                 switch (type){
                     case 1:

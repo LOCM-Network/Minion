@@ -94,6 +94,9 @@ public abstract class Minion extends EntityHuman {
             ListTag<CompoundTag> inventoryTag = (ListTag<CompoundTag>) namedTag.getList("MinionInventory");
             inventoryTag.getAll().forEach(tag -> inventory.setItem(tag.getByte("slot"), NBTIO.getItemHelper(tag)));
         }
+        if(namedTag.contains("MinionTool")){
+            getInventory().setItemInHand(NBTIO.getItemHelper((CompoundTag) namedTag.get("MinionTool")));
+        }
     }
 
     /* PocketMine-MP */
@@ -158,7 +161,6 @@ public abstract class Minion extends EntityHuman {
     public void saveNBT() {
         ListTag<CompoundTag> inventoryTag = new ListTag<>();
         inventory.getContents().forEach((index, item) -> {
-            //?
             CompoundTag nbt = NBTIO.putItemHelper(item);
             nbt.putByte("slot", index);
             inventoryTag.add(nbt);
@@ -247,10 +249,18 @@ public abstract class Minion extends EntityHuman {
 
         form.addButton(new Button(TextFormat.colorize("&l&0Thu công nhân về"), (p, button) -> {
             close();
+            ListTag<CompoundTag> inventoryTag = new ListTag<>();
+            inventory.getContents().forEach((index, item) -> {
+                CompoundTag nbt = NBTIO.putItemHelper(item);
+                nbt.putByte("slot", index);
+                inventoryTag.add(nbt);
+            });
             ItemArmorStand item = (ItemArmorStand) Item.get(ItemID.ARMOR_STAND, 0, 1);
             CompoundTag tag = new CompoundTag();
             tag.putInt("minionType", getType());
             tag.putInt("minionLevel", namedTag.getInt("minionLevel"));
+            tag.put("MinionInventory", inventoryTag);
+            tag.put("MinionTool", NBTIO.putItemHelper(getInventory().getItemInHand()));
             item.setNamedTag(tag);
             owner.getInventory().addItem(item);
         }));

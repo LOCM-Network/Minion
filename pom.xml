@@ -50,5 +50,4 @@
             <systemPath>${project.basedir}/src/main/resources/FormConstructor.jar</systemPath>
         </dependency>
     </dependencies>
-
 </project>
