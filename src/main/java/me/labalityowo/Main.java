@@ -116,8 +116,11 @@ public class Main extends PluginBase implements Listener {
 
         if(type == 1){
             atype = "Thợ mỏ";
-        }else atype = (type == 2 ? "Thợ mỏ" : "Nông dân");
-
+        }else if(type == 2){
+            atype = "Tiều phu";
+        }else{
+            atype = "Nông dân";
+        }
         item.setCustomName(TextFormat.colorize("&e" + atype + "\n&fĐặt xuống đất để tạo công nhân"));
         item.setLore(TextFormat.colorize("&l&eLưu ý:&f Làm mất admin không chịu trách nhiệm!"));
         return item;
