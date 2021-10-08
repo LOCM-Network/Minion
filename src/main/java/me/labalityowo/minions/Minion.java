@@ -127,7 +127,7 @@ public abstract class Minion extends EntityHuman {
             return onUpdate;
         }
 
-        if(!doToolCheck()){
+        if(!doToolCheck(getInventory().getItemInHand())){
             setStatus(MinionStatus.INEFFICIENT_TOOL);
             return onUpdate;
         }
@@ -179,13 +179,7 @@ public abstract class Minion extends EntityHuman {
         return false;
     }
 
-    public boolean doToolCheck(){
-        return Arrays.stream(getTargetBlocks()).anyMatch(block -> getInventory().getItemInHand().useOn(block));
-    }
-
-    public boolean doToolCheck(Item item){
-        return Arrays.stream(getTargetBlocks()).anyMatch(item::useOn);
-    }
+    abstract public boolean doToolCheck(Item item);
 
     @Override
     public boolean attack(EntityDamageEvent source) {

@@ -78,11 +78,6 @@ public class Miner extends Minion{
     }
 
     @Override
-    public boolean doToolCheck(){
-        return getInventory().getItemInHand().isPickaxe();
-    }
-
-    @Override
     public boolean doToolCheck(Item item) {
         return item.isPickaxe();
     }

@@ -71,11 +71,6 @@ public class Farmer extends Minion{
     }
 
     @Override
-    public boolean doToolCheck(){
-        return getInventory().getItemInHand().isHoe();
-    }
-
-    @Override
     public boolean doToolCheck(Item item) {
         return item.isHoe();
     }

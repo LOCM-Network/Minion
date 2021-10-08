@@ -65,11 +65,6 @@ public class Woodcutter extends Minion{
     }
 
     @Override
-    public boolean doToolCheck(){
-        return getInventory().getItemInHand().isAxe();
-    }
-
-    @Override
     public boolean doToolCheck(Item item) {
         return item.isAxe();
     }
