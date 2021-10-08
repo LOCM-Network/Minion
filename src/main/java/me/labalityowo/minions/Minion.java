@@ -52,16 +52,16 @@ public abstract class Minion extends EntityHuman {
 
     public void setStatus(MinionStatus status){
         this.status = status;
-        StringBuilder nametagBuilder = new StringBuilder(getOwner() + "'s Minion\n\nStatus: ");
+        StringBuilder nametagBuilder = new StringBuilder(getOwner() + "'s Minion\n\n&l&fTrạng thái: ");
         switch (status){
             case WORKING:
-                nametagBuilder.append("Working");
+                nametagBuilder.append("&aĐang làm việc\n\n&fCông cụ:&e").append(getInventory().getItemInHand().getName());
                 break;
             case FULL_INVENTORY:
-                nametagBuilder.append("Inventory Fulled");
+                nametagBuilder.append("&cKho đầy");
                 break;
             case INEFFICIENT_TOOL:
-                nametagBuilder.append("Inefficient tools");
+                nametagBuilder.append("&aKhông có công cụ");
                 break;
             case INEFFICIENT_WORKSTATION:
                 nametagBuilder.append("Inefficient workstation");
@@ -77,6 +77,7 @@ public abstract class Minion extends EntityHuman {
     public abstract Block[] getTargetBlocks();
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void initEntity() {
         super.initEntity();
         setScale((float) 0.7);
