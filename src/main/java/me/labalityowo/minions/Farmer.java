@@ -22,7 +22,7 @@ public class Farmer extends Minion{
                 Block.get(Block.COCOA_BLOCK),
                 Block.get(Block.CARROT_BLOCK),
                 Block.get(Block.MELON_BLOCK),
-                Block.get(Block.CARVED_PUMPKIN),
+                Block.get(Block.PUMPKIN),
                 Block.get(Block.LIT_PUMPKIN)
         };
     }
@@ -53,6 +53,8 @@ public class Farmer extends Minion{
             getLevel().setBlock(block, Block.get(BlockID.POTATO_BLOCK));
         }else if(block instanceof BlockNetherWart){
             getLevel().setBlock(block, Block.get(BlockID.NETHER_WART_BLOCK));
+        }else{
+            getLevel().setBlock(block, Block.get(BlockID.AIR));
         }
         Arrays.stream(block.getDrops(getInventory().getItemInHand())).forEach(drop -> {
             if(drop instanceof ItemSeedsWheat || drop instanceof ItemSeedsBeetroot){
@@ -64,13 +66,13 @@ public class Farmer extends Minion{
             }
             inventory.addItem(drop);
         });
-
+        workingTick = 0;
         this.pitch = 0;
     }
 
     @Override
     public boolean doToolCheck(){
-        return true;
+        return getInventory().getItemInHand().isHoe();
     }
 
     @Override

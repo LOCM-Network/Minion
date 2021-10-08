@@ -50,6 +50,7 @@ public class Miner extends Minion{
             this.pitch = 0;
             targetBlock = null;
             breakingBlockTick = 0;
+            return;
         }
         breakingBlockTick++;
         AnimatePacket pk = new AnimatePacket();
@@ -74,6 +75,11 @@ public class Miner extends Minion{
         getLevel().addChunkPacket(block.getFloorX() >> 4, block.getFloorZ() >> 4, pk);
         workingTick = 0;
         targetBlock = block;
+    }
+
+    @Override
+    public boolean doToolCheck(){
+        return getInventory().getItemInHand().isPickaxe();
     }
 
     @Override

@@ -77,7 +77,6 @@ public abstract class Minion extends EntityHuman {
     public abstract Block[] getTargetBlocks();
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void initEntity() {
         super.initEntity();
         setScale((float) 0.7);

@@ -37,6 +37,7 @@ public class Woodcutter extends Minion{
             this.pitch = 0;
             targetBlock = null;
             breakingBlockTick = 0;
+            return;
         }
         breakingBlockTick++;
         AnimatePacket pk = new AnimatePacket();
@@ -64,7 +65,12 @@ public class Woodcutter extends Minion{
     }
 
     @Override
-    public boolean doToolCheck(Item item){
+    public boolean doToolCheck(){
+        return getInventory().getItemInHand().isAxe();
+    }
+
+    @Override
+    public boolean doToolCheck(Item item) {
         return item.isAxe();
     }
 }
