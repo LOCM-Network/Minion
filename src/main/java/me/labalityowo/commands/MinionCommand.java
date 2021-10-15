@@ -24,8 +24,7 @@ public class MinionCommand extends Command {
 
     @Override
     public boolean execute(CommandSender commandSender, String s, String[] strings) {
-        Player owner = (Player) commandSender;
-        if(!owner.isOp()) return false;
+        if(!commandSender.isOp()) return false;
         if(strings.length < 2){
             owner.sendMessage("/minion <player> <type> <level>");
             return true;
