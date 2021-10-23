@@ -51,10 +51,9 @@ public class Main extends PluginBase implements Listener {
         }
         Item item = event.getItem();
         if(item.getId() == Item.ARMOR_STAND){
-            if(item.hasCompoundTag()) return;
-            item.setCount(item.getCount() - 1);
-            event.getPlayer().getInventory().setItemInHand(item);
-            event.setCancelled();
+            if(item.getNamedTag().contains("minionType")){
+                event.setCancelled();
+            }
         }
     }
 
